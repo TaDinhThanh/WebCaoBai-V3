@@ -1,7 +1,7 @@
 import $ from "jquery";
 const TOKENHEADER_VALUE = getCookie('Authorization')
 
-export const URL_API_GET = 'http://localhost:800/WebClone_v2/api/rd/xml/a/';
+export const URL_API_GET = 'http://localhost:800/WebClone_V3/api/rd/xml/a/';
 
 // get cookie
 export function getCookie(name) {

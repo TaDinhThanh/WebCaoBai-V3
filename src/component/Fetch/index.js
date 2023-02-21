@@ -1,6 +1,6 @@
 import { URL_API_GET } from '../Ajax'
 
-const URL_API = 'http://localhost:800/WebClone_v2/rd/xml/a/';
+const URL_API = 'http://localhost:800/WebClone_V3/rd/xml/a/';
 
 export const UpdateCountKeyGoogle = async (id_key) => {
     let options = {

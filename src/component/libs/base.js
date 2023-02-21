@@ -7,12 +7,12 @@ const TOKENHEADER_VALUE = getCookie('Authorization')
 // export const URL_API_GET = 'http://WebClone_v2.test/rd/xml/a/';
 // export const URL_GET_API = 'http://WebClone_v2.test/api/rd/xml/a/'
 
-export const URL_API_GET = 'http://localhost:800/WebClone_v2/rd/xml/a/';
-export const URL_GET_API = 'http://localhost:800/WebClone_v2/api/rd/xml/a/'
+export const URL_API_GET = 'http://localhost:800/WebClone_V3/rd/xml/a/';
+export const URL_GET_API = 'http://localhost:800/WebClone_V3/api/rd/xml/a/'
 
 // export const URL_API_WEB = 'http://WebClone_v2.test/';
 
-export const URL_API_WEB = 'http://localhost:800/WebClone_v2/';
+export const URL_API_WEB = 'http://localhost:800/WebClone_V3/';
 
 const URL_API_EDIT = URL_API_GET
 

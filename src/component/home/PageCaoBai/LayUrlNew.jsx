@@ -55,6 +55,8 @@ const LayUrlNew = () => {
 
     const dataKey = useSelector(state => state.base.data_key)
 
+    const dataKeyGoogle = useSelector(state => state.base.data_key_google)
+
     const list_kh = ["w", "i", "doc", "y", "pdf", "excel"];
     const list_nd = ["Cào nội dung web",
         "Hình ảnh + Tiêu đề hình ảnh",
@@ -248,7 +250,7 @@ const LayUrlNew = () => {
                         }
                     }
                 }).catch(err => console.log(err))
-                console.log(result);
+            console.log(result);
             return result;
         }
 
@@ -931,9 +933,36 @@ const LayUrlNew = () => {
                 .catch(error => console.error(error));
         }
     }
-    
+
     // w5.i10.w2 => w7.i10
     const handleGetUrl = async () => {
+        console.log(dataKeyGoogle);
+        console.log(dataKeyGoogle[2].id);
+        let first_key = null;
+        for (let i = 0; i < dataKeyGoogle.length; i++) {
+            first_key = null;
+            await fetch(`${LINK_SEARCH}key=${dataKeyGoogle[i].key_api}&cx=${CX_SEARCH}&start=${1}&num=${2}&q=${`xay dung la gi`}&searchType=image&gl=vn`).then(async response => {
+                if (response.status === 200) {
+                    console.log("KEY IN 200 API: ", dataKeyGoogle[i].key_api)
+                    first_key = dataKeyGoogle[i].key_api;
+                    return response.json()
+                } else if (response.status === 429) {
+                    console.log("KEY IN 429 API: ", dataKeyGoogle[i].key_api)
+                }
+                // response.json()
+            }).then(async rs => {
+                if (rs) {
+                    await resetAllKeyGg();
+                    await UpdateCountKeyGoogle(dataKeyGoogle[i].id);
+                }
+            }).catch(err => console.log(err))
+            if (first_key !== null) {
+                break;
+            }
+        }
+        console.log(first_key);
+        console.log(677777777);
+        return;
         if (data_key_checked.length === 0) {
             Const_Libs.TOAST.error("Vui lòng chọn trước khi thực hiện!!!")
         } else {
