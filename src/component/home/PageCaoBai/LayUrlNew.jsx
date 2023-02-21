@@ -71,53 +71,56 @@ const LayUrlNew = () => {
         var check = false;
         let ID_KEY
         let KEY_API_SEARCH;
-        await getApiYoutube().then(async rs => {
-            KEY_API_SEARCH = rs.key_api_search
-            ID_KEY = rs.id_key
-        })
-        // var checkLimitKey = false;
-        if (Boolean(KEY_API_SEARCH) === true) {
-            if (Boolean(id_list_vd) === true) {
-                const options = {
-                    method: 'GET',
-                    url: 'https://youtube-v31.p.rapidapi.com/playlistItems',
-                    params: {
-                        playlistId: id_list_vd,
-                        part: 'snippet',
-                        maxResults: '50',
-                    },
-                    headers: {
-                        'X-RapidAPI-Key': KEY_API_SEARCH,
-                        'X-RapidAPI-Host': 'youtube-v31.p.rapidapi.com'
-                    }
-                };
+        // do {
+            result = null;
+            await getApiYoutube().then(async rs => {
+                KEY_API_SEARCH = rs.key_api_search
+                ID_KEY = rs.id_key
+            })
+            // var checkLimitKey = false;
+            if (Boolean(KEY_API_SEARCH) === true) {
+                if (Boolean(id_list_vd) === true) {
+                    const options = {
+                        method: 'GET',
+                        url: 'https://youtube-v31.p.rapidapi.com/playlistItems',
+                        params: {
+                            playlistId: id_list_vd,
+                            part: 'snippet',
+                            maxResults: '50',
+                        },
+                        headers: {
+                            'X-RapidAPI-Key': KEY_API_SEARCH,
+                            'X-RapidAPI-Host': 'youtube-v31.p.rapidapi.com'
+                        }
+                    };
 
-                await axios.request(options).then(async function (response) {
-                    if (response.status === 200) {
-                        await UpdateCountKeyYoutube(ID_KEY);
-                        result = [...response.data.items]
-                        check = true;
+                    await axios.request(options).then(async function (response) {
+                        if (response.status === 200) {
+                            await UpdateCountKeyYoutube(ID_KEY);
+                            result = [...response.data.items]
+                            check = true;
+                        }
+                    }).catch(function (error) {
+                        console.error(error);
+                    });
+                    if (check === false) {
+                        await getNextKeyYoutube(ID_KEY)
                     }
-                }).catch(function (error) {
-                    console.error(error);
-                });
-                if (check === false) {
-                    await getNextKeyYoutube(ID_KEY)
-                }
-            } else {
-                await getUrlByRapidApi(KEY_API_SEARCH, key_search, so_luong).then(async rs => {
-                    if (rs.status === 200) {
-                        await UpdateCountKeyYoutube(ID_KEY);
-                        result = rs.data;
-                        check = true;
-                    }
-                }).catch(error => console.error(error));
+                } else {
+                    await getUrlByRapidApi(KEY_API_SEARCH, key_search, so_luong).then(async rs => {
+                        if (rs.status === 200) {
+                            await UpdateCountKeyYoutube(ID_KEY);
+                            result = rs.data;
+                            check = true;
+                        }
+                    }).catch(error => console.error(error));
 
-                if (check === false) {
-                    await getNextKeyYoutube(ID_KEY)
+                    if (check === false) {
+                        await getNextKeyYoutube(ID_KEY)
+                    }
                 }
             }
-        }
+        // } while (result === null)
         return result
     }
 
@@ -191,33 +194,34 @@ const LayUrlNew = () => {
         let result;
         let ID_KEY;
         let KEY_API_SEARCH;
-        await getApiGoogle().then(async rs => {
-            KEY_API_SEARCH = rs.key_api_search
-            ID_KEY = rs.id_key
-        }).catch(err => console.log(err))
         // do {
-        if (Boolean(KEY_API_SEARCH) === true) {
-            await fetch(`${LINK_SEARCH}key=${KEY_API_SEARCH}&cx=${CX_SEARCH}&start=${start}&num=${count}&safe=active&gl=vn&q=${key_search}`).then(async response => {
-                console.log(response);
-                if (response.status === 200) {
-                    return response.json()
-                } else if (response.status === 429) {
-                    // arrKey
-                    await getNextKeyGoogle(ID_KEY)
-                } else if (response.status === 400) {
-                }
-            })
-                .then(async rs => {
-                    if (rs) {
-                        if (rs.url) {
-                            UpdateCountKeyGoogle(ID_KEY);
-                            result = rs;
-                        }
+            result = null;
+            await getApiGoogle().then(async rs => {
+                KEY_API_SEARCH = rs.key_api_search
+                ID_KEY = rs.id_key
+            }).catch(err => console.log(err))
+            if (Boolean(KEY_API_SEARCH) === true) {
+                await fetch(`${LINK_SEARCH}key=${KEY_API_SEARCH}&cx=${CX_SEARCH}&start=${start}&num=${count}&safe=active&gl=vn&q=${key_search}`).then(async response => {
+                    console.log(response);
+                    if (response.status === 200) {
+                        return response.json()
+                    } else if (response.status === 429) {
+                        // arrKey
+                        await getNextKeyGoogle(ID_KEY)
+                    } else if (response.status === 400) {
                     }
-                }).catch(err => console.log(err))
-            return result;
-        }
+                })
+                    .then(async rs => {
+                        if (rs) {
+                            if (rs.url) {
+                                UpdateCountKeyGoogle(ID_KEY);
+                                result = rs;
+                            }
+                        }
+                    }).catch(err => console.log(err))
+            }
         // } while (result === null)
+        return result;
 
     }
 
@@ -226,35 +230,37 @@ const LayUrlNew = () => {
         let result;
         let ID_KEY;
         let KEY_API_SEARCH;
-        await getApiGoogle().then(async rs => {
-            KEY_API_SEARCH = rs.key_api_search
-            ID_KEY = rs.id_key
-        })
-        if (Boolean(KEY_API_SEARCH) === true) {
-            await fetch(`${LINK_SEARCH}key=${KEY_API_SEARCH}&cx=${CX_SEARCH}&start=${start}&num=${count}&q=${key_search}&searchType=image&gl=vn`).then(async response => {
-                if (response.status === 200) {
-                    return response.json()
-                } else if (response.status === 429) {
-                    await getNextKeyGoogle(ID_KEY)
-                }
-                else {
-                    await getNextKeyGoogle(ID_KEY)
-                }
-                // response.json()
+        // do {
+            result = null;
+            await getApiGoogle().then(async rs => {
+                KEY_API_SEARCH = rs.key_api_search
+                ID_KEY = rs.id_key
             })
-                .then(async rs => {
-                    if (rs) {
-                        if (rs.url) {
-                            await UpdateCountKeyGoogle(ID_KEY);
-                            result = rs;
-                        }
+            if (Boolean(KEY_API_SEARCH) === true) {
+                await fetch(`${LINK_SEARCH}key=${KEY_API_SEARCH}&cx=${CX_SEARCH}&start=${start}&num=${count}&q=${key_search}&searchType=image&gl=vn`).then(async response => {
+                    if (response.status === 200) {
+                        return response.json()
+                    } else if (response.status === 429) {
+                        await getNextKeyGoogle(ID_KEY)
                     }
-                }).catch(err => console.log(err))
-            console.log(result);
-            return result;
-        }
+                    else {
+                        await getNextKeyGoogle(ID_KEY)
+                    }
+                    // response.json()
+                })
+                    .then(async rs => {
+                        if (rs) {
+                            if (rs.url) {
+                                await UpdateCountKeyGoogle(ID_KEY);
+                                result = rs;
+                            }
+                        }
+                    }).catch(err => console.log(err))
+                console.log(result);
+            }
 
         // } while (result === null)
+        return result;
     }
 
     // w2.y3.w5 -> w7.y3
@@ -936,33 +942,6 @@ const LayUrlNew = () => {
 
     // w5.i10.w2 => w7.i10
     const handleGetUrl = async () => {
-        console.log(dataKeyGoogle);
-        console.log(dataKeyGoogle[2].id);
-        let first_key = null;
-        for (let i = 0; i < dataKeyGoogle.length; i++) {
-            first_key = null;
-            await fetch(`${LINK_SEARCH}key=${dataKeyGoogle[i].key_api}&cx=${CX_SEARCH}&start=${1}&num=${2}&q=${`xay dung la gi`}&searchType=image&gl=vn`).then(async response => {
-                if (response.status === 200) {
-                    console.log("KEY IN 200 API: ", dataKeyGoogle[i].key_api)
-                    first_key = dataKeyGoogle[i].key_api;
-                    return response.json()
-                } else if (response.status === 429) {
-                    console.log("KEY IN 429 API: ", dataKeyGoogle[i].key_api)
-                }
-                // response.json()
-            }).then(async rs => {
-                if (rs) {
-                    await resetAllKeyGg();
-                    await UpdateCountKeyGoogle(dataKeyGoogle[i].id);
-                }
-            }).catch(err => console.log(err))
-            if (first_key !== null) {
-                break;
-            }
-        }
-        console.log(first_key);
-        console.log(677777777);
-        return;
         if (data_key_checked.length === 0) {
             Const_Libs.TOAST.error("Vui lòng chọn trước khi thực hiện!!!")
         } else {
